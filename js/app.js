@@ -151,3 +151,19 @@ selectFiltro.addEventListener("change", render);
 
 textoPresupuesto.textContent = "Presupuesto mensual: " + formatoPesos.format(PRESUPUESTO);
 render();
+function guardarGastos() {
+  localStorage.setItem(CLAVE_STORAGE, JSON.stringify(gastos));
+}
+
+function cargarGastos() {
+  const guardado = localStorage.getItem(CLAVE_STORAGE);
+  if (guardado === null) {
+    return [];
+  }
+  try {
+    const datos = JSON.parse(guardado);
+    return Array.isArray(datos) ? datos : [];
+  } catch (error) {
+    return [];
+  }
+}
