@@ -21,3 +21,36 @@ const formatoPesos = new Intl.NumberFormat("es-CO", {
   currency: "COP",
   maximumFractionDigits: 0,
 });
+
+let gastos = [];
+
+function render() {
+  cuerpoTabla.textContent = "";
+
+  gastos.forEach(function (gasto) {
+    const fila = document.createElement("tr");
+
+    const celdaDescripcion = document.createElement("td");
+    celdaDescripcion.textContent = gasto.descripcion;
+
+    const celdaCategoria = document.createElement("td");
+    celdaCategoria.textContent = gasto.categoria;
+
+    const celdaValor = document.createElement("td");
+    celdaValor.textContent = formatoPesos.format(gasto.valor);
+
+    const celdaAccion = document.createElement("td");
+    const botonEliminar = document.createElement("button");
+    botonEliminar.textContent = "Eliminar";
+    botonEliminar.classList.add("boton-eliminar");
+    botonEliminar.dataset.id = gasto.id;
+    celdaAccion.appendChild(botonEliminar);
+
+    fila.append(celdaDescripcion, celdaCategoria, celdaValor, celdaAccion);
+    cuerpoTabla.appendChild(fila);
+  });
+
+  mensajeVacio.hidden = gastos.length > 0;
+}
+
+render();
