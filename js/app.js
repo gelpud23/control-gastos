@@ -106,3 +106,13 @@ formulario.addEventListener("submit", function (evento) {
   formulario.reset();
   inputDescripcion.focus();
 });
+tabla.addEventListener("click", function (evento) {
+  if (!evento.target.classList.contains("boton-eliminar")) {
+    return;
+  }
+  const id = Number(evento.target.dataset.id);
+  gastos = gastos.filter(function (gasto) {
+    return gasto.id !== id;
+  });
+  render();
+});
