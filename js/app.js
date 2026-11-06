@@ -19,15 +19,41 @@ const textoPresupuesto = document.querySelector("#presupuesto");
 const formatoPesos = new Intl.NumberFormat("es-CO", {
   style: "currency",
   currency: "COP",
-  maximumFractionDigits: 0,
+  maximumFractionDigits: 0
 });
 
-let gastos = [];
+function guardarGastos() {
+  localStorage.setItem(CLAVE_STORAGE, JSON.stringify(gastos));
+}
+
+function cargarGastos() {
+  const guardado = localStorage.getItem(CLAVE_STORAGE);
+  if (guardado === null) {
+    return [];
+  }
+  try {
+    const datos = JSON.parse(guardado);
+    return Array.isArray(datos) ? datos : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+let gastos = cargarGastos();
 
 function render() {
+  const categoriaElegida = selectFiltro.value;
+
+  let gastosVisibles = gastos;
+  if (categoriaElegida !== "todas") {
+    gastosVisibles = gastos.filter(function (gasto) {
+      return gasto.categoria === categoriaElegida;
+    });
+  }
+
   cuerpoTabla.textContent = "";
 
-  gastos.forEach(function (gasto) {
+  gastosVisibles.forEach(function (gasto) {
     const fila = document.createElement("tr");
 
     const celdaDescripcion = document.createElement("td");
@@ -50,10 +76,22 @@ function render() {
     cuerpoTabla.appendChild(fila);
   });
 
-  mensajeVacio.hidden = gastos.length > 0;
-}
+  mensajeVacio.hidden = gastosVisibles.length > 0;
 
-render();
+  const totalVisible = gastosVisibles.reduce(function (suma, gasto) {
+    return suma + gasto.valor;
+  }, 0);
+  textoTotal.textContent = formatoPesos.format(totalVisible);
+
+  const totalGeneral = gastos.reduce(function (suma, gasto) {
+    return suma + gasto.valor;
+  }, 0);
+  if (totalGeneral > PRESUPUESTO) {
+    parrafoTotal.classList.add("excedido");
+  } else {
+    parrafoTotal.classList.remove("excedido");
+  }
+}
 
 function limpiarErrores() {
   errorDescripcion.textContent = "";
@@ -102,10 +140,12 @@ formulario.addEventListener("submit", function (evento) {
   };
 
   gastos.push(nuevoGasto);
+  guardarGastos();
   render();
   formulario.reset();
   inputDescripcion.focus();
 });
+
 tabla.addEventListener("click", function (evento) {
   if (!evento.target.classList.contains("boton-eliminar")) {
     return;
@@ -114,56 +154,11 @@ tabla.addEventListener("click", function (evento) {
   gastos = gastos.filter(function (gasto) {
     return gasto.id !== id;
   });
+  guardarGastos();
   render();
 });
-function render() {
-  const categoriaElegida = selectFiltro.value;
 
-  let gastosVisibles = gastos;
-  if (categoriaElegida !== "todas") {
-    gastosVisibles = gastos.filter(function (gasto) {
-      return gasto.categoria === categoriaElegida;
-    });
-  }
-
-  cuerpoTabla.textContent = "";
-
-  gastosVisibles.forEach(function (gasto) {
-    // ...aquí queda igual el código que crea la fila...
-  });
-
-  mensajeVacio.hidden = gastosVisibles.length > 0;
-    const totalVisible = gastosVisibles.reduce(function (suma, gasto) {
-    return suma + gasto.valor;
-  }, 0);
-  textoTotal.textContent = formatoPesos.format(totalVisible);
-
-  const totalGeneral = gastos.reduce(function (suma, gasto) {
-    return suma + gasto.valor;
-  }, 0);
-  if (totalGeneral > PRESUPUESTO) {
-    parrafoTotal.classList.add("excedido");
-  } else {
-    parrafoTotal.classList.remove("excedido");
-  }
-}
 selectFiltro.addEventListener("change", render);
 
 textoPresupuesto.textContent = "Presupuesto mensual: " + formatoPesos.format(PRESUPUESTO);
 render();
-function guardarGastos() {
-  localStorage.setItem(CLAVE_STORAGE, JSON.stringify(gastos));
-}
-
-function cargarGastos() {
-  const guardado = localStorage.getItem(CLAVE_STORAGE);
-  if (guardado === null) {
-    return [];
-  }
-  try {
-    const datos = JSON.parse(guardado);
-    return Array.isArray(datos) ? datos : [];
-  } catch (error) {
-    return [];
-  }
-}

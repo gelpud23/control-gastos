@@ -1,0 +1,9 @@
+[33m6a21275[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m Agrega persistencia de gastos con localStorage
+[33m76d1284[m Agrega total, alerta de presupuesto y filtro por categoría
+[33mb12025f[m Agrega eliminación de gastos con delegación de eventos
+[33md30fde1[m Agrega validación del formulario y registro del gasto
+[33m497118f[m Agrega arreglo de gastos y función render
+[33me61bee2[m se agrega CONST en js
+[33m07f589a[m se agrega los stylos al trabajo
+[33mc189387[m  SE AGREGA EL HTML CON LAS TABLAS
+[33m175cf1d[m se crea la estrutura
