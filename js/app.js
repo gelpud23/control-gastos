@@ -116,3 +116,38 @@ tabla.addEventListener("click", function (evento) {
   });
   render();
 });
+function render() {
+  const categoriaElegida = selectFiltro.value;
+
+  let gastosVisibles = gastos;
+  if (categoriaElegida !== "todas") {
+    gastosVisibles = gastos.filter(function (gasto) {
+      return gasto.categoria === categoriaElegida;
+    });
+  }
+
+  cuerpoTabla.textContent = "";
+
+  gastosVisibles.forEach(function (gasto) {
+    // ...aquí queda igual el código que crea la fila...
+  });
+
+  mensajeVacio.hidden = gastosVisibles.length > 0;
+    const totalVisible = gastosVisibles.reduce(function (suma, gasto) {
+    return suma + gasto.valor;
+  }, 0);
+  textoTotal.textContent = formatoPesos.format(totalVisible);
+
+  const totalGeneral = gastos.reduce(function (suma, gasto) {
+    return suma + gasto.valor;
+  }, 0);
+  if (totalGeneral > PRESUPUESTO) {
+    parrafoTotal.classList.add("excedido");
+  } else {
+    parrafoTotal.classList.remove("excedido");
+  }
+}
+selectFiltro.addEventListener("change", render);
+
+textoPresupuesto.textContent = "Presupuesto mensual: " + formatoPesos.format(PRESUPUESTO);
+render();
