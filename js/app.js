@@ -54,3 +54,55 @@ function render() {
 }
 
 render();
+
+function limpiarErrores() {
+  errorDescripcion.textContent = "";
+  errorValor.textContent = "";
+  errorCategoria.textContent = "";
+}
+
+formulario.addEventListener("submit", function (evento) {
+  evento.preventDefault();
+  limpiarErrores();
+
+  const descripcion = inputDescripcion.value.trim();
+  const textoValor = inputValor.value.trim();
+  const valor = Number(textoValor);
+  const categoria = selectCategoria.value;
+
+  let hayErrores = false;
+
+  if (descripcion === "") {
+    errorDescripcion.textContent = "La descripción es obligatoria.";
+    hayErrores = true;
+  }
+
+  if (textoValor === "") {
+    errorValor.textContent = "El valor es obligatorio.";
+    hayErrores = true;
+  } else if (isNaN(valor) || valor <= 0) {
+    errorValor.textContent = "El valor debe ser mayor que cero.";
+    hayErrores = true;
+  }
+
+  if (categoria === "") {
+    errorCategoria.textContent = "Selecciona una categoría.";
+    hayErrores = true;
+  }
+
+  if (hayErrores) {
+    return;
+  }
+
+  const nuevoGasto = {
+    id: Date.now(),
+    descripcion: descripcion,
+    valor: valor,
+    categoria: categoria
+  };
+
+  gastos.push(nuevoGasto);
+  render();
+  formulario.reset();
+  inputDescripcion.focus();
+});
